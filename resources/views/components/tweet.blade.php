@@ -11,15 +11,17 @@
             </a>
         </div>
 
+        @unless(url()->current() === $tweet->user->path())
         <div class="ms-auto">
-            <x-button>Follow</x-button>
+            <x-follow-button :user="$tweet->user" />
         </div>
+        @endunless
     </div>
 
     <div class="px-3">
         <p class="mb-3">
             {{ $tweet->body }}
         </p>
-        <x-like-buttons></x-like-buttons>
+        <x-like-buttons :$tweet ></x-like-buttons>
     </div>
 </div>

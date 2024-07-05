@@ -11,6 +11,7 @@
         </li>
         <li>
             <form action="/logout" method="POST">
+                @csrf
                 <x-button>Logout</x-button>
             </form>
         </li>

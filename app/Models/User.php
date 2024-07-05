@@ -9,7 +9,7 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, Follable;
 
     /**
      * The attributes that are mass assignable.
@@ -18,6 +18,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'avatar',
         'username',
         'email',
         'password',
@@ -46,9 +47,9 @@ class User extends Authenticatable
         ];
     }
 
-    public function getAvatarAttribute()
+    public function getAvatarAttribute($value)
     {
-        return 'https://i.pravatar.cc/140?u=' . $this->email;
+        return $value ? asset($value) : 'https://placehold.co/100';
     }
 
     public function timeline()
@@ -56,26 +57,25 @@ class User extends Authenticatable
         $friends = $this->follows()->pluck('id');
         return Tweet::whereIn('user_id', $friends)
             ->orWhere('user_id', $this->id)
-            ->latest()->get();
+            ->withLikes()
+            ->latest()
+            ->paginate(30);
     }
 
     public function tweets()
     {
-        return $this->hasMany(Tweet::class);
+        return $this->hasMany(Tweet::class)->latest();
     }
 
-    public function follow(User $user)
+    public function likes()
     {
-        return $this->follows()->save($user);
+        return $this->hasMany(Like::class);
     }
 
-    public function follows()
+    public function path($append = '')
     {
-        return $this->belongsToMany(User::class, 'follows', 'user_id', 'following_user_id');
-    }
+        $path = route('profiles.show', $this->username);
 
-    public function path()
-    {
-        return route('profiles.show', $this->username);
+        return $append ? "{$path}/{$append}" : $path;
     }
 }

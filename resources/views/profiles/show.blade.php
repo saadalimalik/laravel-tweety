@@ -16,15 +16,20 @@
 
         <section class="px-4">
             <div class="mb-4 flex justify-between items-center">
-                <div class="max-w-48 truncate">
+                <div class="max-w-56">
                     <h1 class="text-2xl font-bold">{{ $user->name }}</h1>
                     <p class="text-gray-400">{{ '@' . $user->username }}</p>
                     <span>Joined {{ $user->created_at->diffForHumans() }}</span>
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <x-button>Follow</x-button>
-                    <button class="px-4 py-2 border rounded-full">Edit Profile</button>
+                    <x-follow-button :$user />
+
+                    @can('edit', $user)
+                        <a href="{{ $user->path('edit') }}">
+                            <button class="px-4 py-2 border rounded-full">Edit Profile</button>
+                        </a>
+                    @endcan
                 </div>
             </div>
 
@@ -38,5 +43,5 @@
 
     <hr>
 
-    <x-timeline :tweets="$user->tweets" />
+    <x-timeline :$tweets />
 </x-app-layout>

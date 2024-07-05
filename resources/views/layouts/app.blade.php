@@ -28,5 +28,7 @@
             </main>
             <x-info></x-info>
         </div>
+
+        <script src="http://unpkg.com/turbolinks"></script>
     </body>
 </html>
